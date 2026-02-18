@@ -21,6 +21,7 @@
 ### Changed
 
 - Expanded installation documentation with a non-`uv` path using `venv` + `pip`.
+- Added MCP client setup docs for VS Code Copilot (`.vscode/mcp.json`) and Codex (`~/.codex/config.toml`), including isolated `.venv` launch examples.
 - Updated coverage model from a subset-only toolset to a full-surface bridge over public `dohq-artifactory` methods.
 - Reorganized project layout to `src/artifactory_mcp/` package structure.
 - Added package build metadata and CLI entrypoint `artifactory-mcp`.

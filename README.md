@@ -107,6 +107,105 @@ Without `uv`:
   -v ARTIFACTORY_PASSWORD=your-password-or-api-key
 ```
 
+## Add to VS Code Copilot (MCP)
+
+Create `.vscode/mcp.json` in this repository.
+
+If you use `uv`:
+
+```json
+{
+  "servers": {
+    "artifactory-mcp": {
+      "type": "stdio",
+      "command": "uv",
+      "args": ["run", "artifactory-mcp"],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "ARTIFACTORY_BASE_URL": "https://your-company.jfrog.io/artifactory",
+        "ARTIFACTORY_USERNAME": "your-user",
+        "ARTIFACTORY_PASSWORD": "your-password-or-api-key"
+      }
+    }
+  }
+}
+```
+
+If you do not use `uv` and want a dedicated `.venv` for VS Code MCP:
+
+```bash
+python3.13 -m venv .venv
+./.venv/bin/pip install -U pip
+./.venv/bin/pip install -e .
+```
+
+Then use:
+
+```json
+{
+  "servers": {
+    "artifactory-mcp": {
+      "type": "stdio",
+      "command": "${workspaceFolder}/.venv/bin/python",
+      "args": ["-m", "artifactory_mcp"],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "ARTIFACTORY_BASE_URL": "https://your-company.jfrog.io/artifactory",
+        "ARTIFACTORY_USERNAME": "your-user",
+        "ARTIFACTORY_PASSWORD": "your-password-or-api-key"
+      }
+    }
+  }
+}
+```
+
+Windows `command` path variant:
+
+```text
+${workspaceFolder}\\.venv\\Scripts\\python.exe
+```
+
+After saving `mcp.json`, start the server from the CodeLens "Start" action and use Copilot Chat in Agent mode.
+
+## Add to Codex
+
+Codex reads MCP servers from `~/.codex/config.toml` (or project-local `.codex/config.toml`).
+
+Using `uv`:
+
+```toml
+[mcp_servers.artifactory_mcp]
+command = "uv"
+args = ["run", "artifactory-mcp"]
+cwd = "/absolute/path/to/artifactory_mcp"
+startup_timeout_sec = 20
+
+[mcp_servers.artifactory_mcp.env]
+ARTIFACTORY_BASE_URL = "https://your-company.jfrog.io/artifactory"
+ARTIFACTORY_USERNAME = "your-user"
+ARTIFACTORY_PASSWORD = "your-password-or-api-key"
+```
+
+Without `uv`, using a dedicated venv:
+
+```toml
+[mcp_servers.artifactory_mcp]
+command = "/absolute/path/to/artifactory_mcp/.venv/bin/python"
+args = ["-m", "artifactory_mcp"]
+cwd = "/absolute/path/to/artifactory_mcp"
+startup_timeout_sec = 20
+
+[mcp_servers.artifactory_mcp.env]
+ARTIFACTORY_BASE_URL = "https://your-company.jfrog.io/artifactory"
+ARTIFACTORY_USERNAME = "your-user"
+ARTIFACTORY_PASSWORD = "your-password-or-api-key"
+```
+
+References:
+
+- GitHub Copilot MCP setup: <https://docs.github.com/en/copilot/how-tos/provide-context/use-mcp/extend-copilot-chat-with-mcp>
+- Codex MCP config: <https://developers.openai.com/codex/mcp>
+
 ## Tool Examples
 
 List a repository path:

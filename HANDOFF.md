@@ -19,6 +19,7 @@
 - Package entrypoint added: `artifactory-mcp` and module entrypoint `python -m artifactory_mcp`.
 - Documentation added (`README.md`, `docs/*`, `CHANGELOG.md`).
 - Added installation docs for environments without `uv`.
+- Added MCP client onboarding docs for VS Code Copilot and Codex, with both `uv` and dedicated `.venv` launch configurations.
 - Full underlying package coverage now provided through generic bridge invocation and handle workflow.
 - Added `examples/tool_calls.json` and `tests/test_smoke.py` for layout completeness.
 - Bootstrapped pre-commit with Python profile and merged template settings into `pyproject.toml`.
