@@ -1,0 +1,46 @@
+{
+  "get_artifact_details": {
+    "include_download_stats": true,
+    "include_properties": true,
+    "path": "com/example/app/1.0.0/app-1.0.0.jar",
+    "repository": "libs-release-local"
+  },
+  "invoke_artifactory_path_method": {
+    "max_items": 50,
+    "method": "aql",
+    "path": "com/example",
+    "positional_args": [
+      "items.find",
+      {
+        "repo": "libs-release-local"
+      }
+    ],
+    "repository": "libs-release-local"
+  },
+  "invoke_artifactory_root_method": {
+    "keyword_args": {
+      "lazy": true
+    },
+    "max_items": 200,
+    "method": "get_repositories"
+  },
+  "list_artifactory_capabilities": {},
+  "list_artifacts": {
+    "max_items": 100,
+    "path": "com/example",
+    "pattern": "*.jar",
+    "recursive": true,
+    "repository": "libs-release-local"
+  },
+  "read_artifact_text": {
+    "max_bytes": 100000,
+    "path": "configs/app.yaml",
+    "repository": "generic-local"
+  },
+  "write_artifact_text": {
+    "content": "release 2026-02-18",
+    "overwrite": false,
+    "path": "notes/release.txt",
+    "repository": "generic-local"
+  }
+}

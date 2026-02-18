@@ -1,0 +1,39 @@
+[build-system]
+requires = ["hatchling>=1.27.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "artifactory-mcp"
+version = "0.1.0"
+description = "MCP server for browsing and managing JFrog Artifactory artifacts."
+readme = "README.md"
+requires-python = ">=3.10,<3.14"
+dependencies = [
+    "dohq-artifactory>=1.0.1",
+    "mcp[cli]>=1.26.0",
+]
+
+[project.scripts]
+artifactory-mcp = "artifactory_mcp.server:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/artifactory_mcp"]
+
+[tool.uv]
+package = true
+
+[tool.ruff]
+line-length = 120
+target-version = "py313"
+lint.select = ["E", "F", "W", "I"]
+
+[tool.mypy]
+ignore_missing_imports = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+
+[dependency-groups]
+dev = [
+    "prek>=0.3.3",
+    "pytest>=9.0.2",
+]
