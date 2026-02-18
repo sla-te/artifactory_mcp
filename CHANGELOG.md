@@ -27,6 +27,7 @@
   - clearer hints for invalid/partial token values.
 - Base URL normalization now auto-appends `/artifactory` for host-only URLs.
 - Hardened artifact detail serialization for non-dict `download_stats()` payloads.
+- Fixed artifact stat serialization to normalize datetime/date values to ISO strings for MCP structured output.
 - Updated coverage model from a subset-only toolset to a full-surface bridge over public `dohq-artifactory` methods.
 - Reorganized project layout to `src/artifactory_mcp/` package structure.
 - Refactored `src/artifactory_mcp/server.py` into focused modules

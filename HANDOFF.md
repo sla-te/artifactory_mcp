@@ -40,6 +40,7 @@
   - Artifactory error hints now include missing `/artifactory` base URL guidance.
   - host-only base URLs are auto-normalized to append `/artifactory`.
   - details serialization now handles non-dict objects returned by `download_stats()`.
+  - artifact stat serialization now coerces datetime/date values to ISO strings to satisfy structured output validation.
 
 ## Environment Details
 

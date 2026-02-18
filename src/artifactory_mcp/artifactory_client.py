@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import date, datetime
 from typing import Any
 
 from artifactory import ArtifactoryPath, ArtifactorySaaSPath
@@ -53,19 +54,47 @@ def _path_in_repo(path: ArtifactoryPath | ArtifactorySaaSPath) -> str:
     return str(path.path_in_repo).lstrip("/")
 
 
+def _coerce_optional_str(value: Any) -> str | None:
+    if value is None:
+        return None
+    if isinstance(value, datetime):
+        return value.isoformat()
+    if isinstance(value, date):
+        return value.isoformat()
+    return str(value)
+
+
+def _coerce_optional_int(value: Any) -> int | None:
+    if value is None:
+        return None
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _coerce_children(value: Any) -> list[str] | None:
+    if value is None:
+        return None
+    try:
+        return [str(item) for item in value]
+    except TypeError:
+        return [str(value)]
+
+
 def _to_artifact_stat(raw_stat: Any) -> ArtifactStat:
     children = getattr(raw_stat, "children", None)
     return ArtifactStat(
-        created=getattr(raw_stat, "created", None),
-        last_modified=getattr(raw_stat, "last_modified", None),
-        last_updated=getattr(raw_stat, "last_updated", None),
-        created_by=getattr(raw_stat, "created_by", None),
-        modified_by=getattr(raw_stat, "modified_by", None),
-        mime_type=getattr(raw_stat, "mime_type", None),
-        size=getattr(raw_stat, "size", None),
-        sha1=getattr(raw_stat, "sha1", None),
-        sha256=getattr(raw_stat, "sha256", None),
-        md5=getattr(raw_stat, "md5", None),
+        created=_coerce_optional_str(getattr(raw_stat, "created", None)),
+        last_modified=_coerce_optional_str(getattr(raw_stat, "last_modified", None)),
+        last_updated=_coerce_optional_str(getattr(raw_stat, "last_updated", None)),
+        created_by=_coerce_optional_str(getattr(raw_stat, "created_by", None)),
+        modified_by=_coerce_optional_str(getattr(raw_stat, "modified_by", None)),
+        mime_type=_coerce_optional_str(getattr(raw_stat, "mime_type", None)),
+        size=_coerce_optional_int(getattr(raw_stat, "size", None)),
+        sha1=_coerce_optional_str(getattr(raw_stat, "sha1", None)),
+        sha256=_coerce_optional_str(getattr(raw_stat, "sha256", None)),
+        md5=_coerce_optional_str(getattr(raw_stat, "md5", None)),
         is_dir=bool(getattr(raw_stat, "is_dir", False)),
-        children=list(children) if children is not None else None,
+        children=_coerce_children(children),
     )
