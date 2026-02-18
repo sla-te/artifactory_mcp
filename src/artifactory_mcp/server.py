@@ -137,7 +137,7 @@ class ServerSettings:
     mcp_default_max_items: int
 
     @classmethod
-    def from_env(cls) -> "ServerSettings":
+    def from_env(cls) -> ServerSettings:
         transport = os.getenv("MCP_TRANSPORT", "stdio").strip().lower()
         if transport not in {"stdio", "streamable-http"}:
             raise ValueError(f"Invalid MCP_TRANSPORT {transport!r}. Supported values: stdio, streamable-http.")
@@ -565,7 +565,7 @@ def _decode_special_argument(mapping: dict[str, Any]) -> Any:
             raise ValueError("__bytes_base64__ must be a string.")
         try:
             return base64.b64decode(encoded, validate=True)
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             raise ValueError("Invalid __bytes_base64__ payload.") from exc
 
     if "__path__" in mapping and len(mapping) == 1:
@@ -736,10 +736,7 @@ def _list_artifacts_sync(
             continue
 
         child_path = _path_in_repo(child)
-        if root_in_repo:
-            relative_path = str(pathlib.PurePosixPath(child_path).relative_to(root_in_repo))
-        else:
-            relative_path = child_path
+        relative_path = str(pathlib.PurePosixPath(child_path).relative_to(root_in_repo)) if root_in_repo else child_path
 
         size: int | None = None
         last_modified: str | None = None
@@ -912,7 +909,7 @@ async def list_artifacts(
                 base_url,
             ),
         )
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         raise RuntimeError(_format_error("list_artifacts", exc)) from None
 
 
@@ -937,7 +934,7 @@ async def get_artifact_details(
                 base_url,
             ),
         )
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         raise RuntimeError(_format_error("get_artifact_details", exc)) from None
 
 
@@ -962,7 +959,7 @@ async def read_artifact_text(
                 base_url,
             ),
         )
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         raise RuntimeError(_format_error("read_artifact_text", exc)) from None
 
 
@@ -991,7 +988,7 @@ async def write_artifact_text(
                 base_url,
             ),
         )
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         raise RuntimeError(_format_error("write_artifact_text", exc)) from None
 
 
@@ -1000,7 +997,7 @@ async def list_artifactory_capabilities() -> CapabilitiesResult:
     """List the available method surface from the underlying dohq-artifactory client and bridge argument conventions."""
     try:
         return cast(CapabilitiesResult, await anyio.to_thread.run_sync(_list_capabilities_sync))
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         raise RuntimeError(_format_error("list_artifactory_capabilities", exc)) from None
 
 
@@ -1027,7 +1024,7 @@ async def invoke_artifactory_root_method(
                 max_items=max_items,
             ),
         )
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         raise RuntimeError(_format_error("invoke_artifactory_root_method", exc)) from None
 
 
@@ -1056,7 +1053,7 @@ async def invoke_artifactory_path_method(
                 max_items=max_items,
             ),
         )
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         raise RuntimeError(_format_error("invoke_artifactory_path_method", exc)) from None
 
 
@@ -1083,7 +1080,7 @@ async def invoke_artifactory_handle_method(
                 max_items=max_items,
             ),
         )
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         raise RuntimeError(_format_error("invoke_artifactory_handle_method", exc)) from None
 
 

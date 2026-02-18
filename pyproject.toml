@@ -19,16 +19,16 @@ artifactory-mcp = "artifactory_mcp.server:main"
 [tool.hatch.build.targets.wheel]
 packages = ["src/artifactory_mcp"]
 
-[tool.uv]
-package = true
-
 [tool.ruff]
+lint.extend-select = ["I", "B", "UP", "SIM", "C4", "C90", "PIE", "RUF"]
+lint.ignore = ["E501"]
+lint.mccabe = { max-complexity = 14 }
+lint.pydocstyle = { convention = 'google' }
 line-length = 120
 target-version = "py313"
-lint.select = ["E", "F", "W", "I"]
 
 [tool.mypy]
-ignore_missing_imports = true
+ignore_missing_imports = false
 warn_unused_ignores = true
 warn_redundant_casts = true
 

@@ -194,7 +194,7 @@ Transport settings:
 ```bash
 uv run --python 3.13 python -m py_compile server.py main.py src/artifactory_mcp/server.py
 uv run python -m pytest -q tests/test_smoke.py
-uv run pre-commit run -a
+uv run prek -a
 ```
 
 ## Pre-Commit
@@ -210,7 +210,7 @@ This repo includes a Python profile pre-commit baseline with:
 Install hooks:
 
 ```bash
-uv run pre-commit install
+uv run prek install
 ```
 
 ## Troubleshooting
