@@ -12,6 +12,7 @@ import re
 import threading
 from collections.abc import Iterator
 from dataclasses import dataclass
+from functools import partial
 from typing import Any, Literal, TypedDict, cast
 from urllib.parse import urlparse
 
@@ -1012,17 +1013,18 @@ async def invoke_artifactory_root_method(
     """Invoke any public method on a root ArtifactoryPath object to access full admin/build/query functionality."""
     try:
         root = _create_root(_resolve_base_url(base_url))
+        invoke_call = partial(
+            _invoke_method_sync,
+            target=root,
+            target_label=f"root:{root}",
+            method=method,
+            positional_args=positional_args or [],
+            keyword_args=keyword_args or {},
+            max_items=max_items,
+        )
         return cast(
             GenericMethodResult,
-            await anyio.to_thread.run_sync(
-                _invoke_method_sync,
-                target=root,
-                target_label=f"root:{root}",
-                method=method,
-                positional_args=positional_args or [],
-                keyword_args=keyword_args or {},
-                max_items=max_items,
-            ),
+            await anyio.to_thread.run_sync(invoke_call),
         )
     except Exception as exc:
         raise RuntimeError(_format_error("invoke_artifactory_root_method", exc)) from None
@@ -1041,17 +1043,18 @@ async def invoke_artifactory_path_method(
     """Invoke any public method on an ArtifactoryPath object for broad path-level package coverage."""
     try:
         target = _create_path(_resolve_base_url(base_url), repository, path)
+        invoke_call = partial(
+            _invoke_method_sync,
+            target=target,
+            target_label=f"path:{target}",
+            method=method,
+            positional_args=positional_args or [],
+            keyword_args=keyword_args or {},
+            max_items=max_items,
+        )
         return cast(
             GenericMethodResult,
-            await anyio.to_thread.run_sync(
-                _invoke_method_sync,
-                target=target,
-                target_label=f"path:{target}",
-                method=method,
-                positional_args=positional_args or [],
-                keyword_args=keyword_args or {},
-                max_items=max_items,
-            ),
+            await anyio.to_thread.run_sync(invoke_call),
         )
     except Exception as exc:
         raise RuntimeError(_format_error("invoke_artifactory_path_method", exc)) from None
@@ -1068,17 +1071,18 @@ async def invoke_artifactory_handle_method(
     """Invoke a method on an object previously returned as a handle from bridge tools."""
     try:
         handle = _HANDLE_STORE.get(handle_id)
+        invoke_call = partial(
+            _invoke_method_sync,
+            target=handle,
+            target_label=f"handle:{handle_id}:{type(handle).__name__}",
+            method=method,
+            positional_args=positional_args or [],
+            keyword_args=keyword_args or {},
+            max_items=max_items,
+        )
         return cast(
             GenericMethodResult,
-            await anyio.to_thread.run_sync(
-                _invoke_method_sync,
-                target=handle,
-                target_label=f"handle:{handle_id}:{type(handle).__name__}",
-                method=method,
-                positional_args=positional_args or [],
-                keyword_args=keyword_args or {},
-                max_items=max_items,
-            ),
+            await anyio.to_thread.run_sync(invoke_call),
         )
     except Exception as exc:
         raise RuntimeError(_format_error("invoke_artifactory_handle_method", exc)) from None
