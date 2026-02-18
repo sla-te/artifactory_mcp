@@ -14,7 +14,15 @@ MCP server for JFrog Artifactory built with Python, `FastMCP`, and `dohq-artifac
 
 ## Architecture
 
-- `src/artifactory_mcp/server.py`: MCP server, tools, validation, and transport startup.
+- `src/artifactory_mcp/server.py`: compatibility entrypoint and public re-exports.
+- `src/artifactory_mcp/tools.py`: MCP tool registrations and async tool handlers.
+- `src/artifactory_mcp/runtime.py`: `FastMCP` construction, transport security, and logging.
+- `src/artifactory_mcp/settings.py`: environment parsing, validation, and runtime settings.
+- `src/artifactory_mcp/artifactory_client.py`: Artifactory client/path construction helpers.
+- `src/artifactory_mcp/bridge.py`: generic method bridge, argument decoding, and serialization.
+- `src/artifactory_mcp/artifact_ops.py`: artifact list/details/read/write sync operations.
+- `src/artifactory_mcp/models.py`: shared structured output `TypedDict` models.
+- `src/artifactory_mcp/handles.py`: in-memory handle store for bridge follow-up calls.
 - `server.py` and `main.py`: compatibility wrappers for direct script execution.
 - `src/artifactory_mcp/__main__.py`: `python -m artifactory_mcp` entrypoint.
 - `docs/`: installation/configuration/API reference.
@@ -318,8 +326,13 @@ uv run prek install
   - Use Python `<3.14` (for example, `uv sync --python 3.13`).
 - Authentication failures:
   - Configure exactly one auth method: token, API key, or username/password.
+  - `ARTIFACTORY_TOKEN` must be a complete token value. Header-only JWT fragments are rejected.
 - Empty `ARTIFACTORY_BASE_URL` errors:
   - Set `ARTIFACTORY_BASE_URL` or pass `base_url` in tool calls.
+- 404 errors for `/api/*` calls:
+  - Use a base URL that includes `/artifactory` (for example, `https://host/artifactory`).
+- Admin/user-management method errors:
+  - Some methods in the underlying client require Artifactory Pro or elevated scopes and may fail on OSS/limited tokens.
 
 ## Changelog Lite
 

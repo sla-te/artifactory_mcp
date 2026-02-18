@@ -22,10 +22,21 @@
 
 - Expanded installation documentation with a non-`uv` path using `venv` + `pip`.
 - Added MCP client setup docs for VS Code Copilot (`.vscode/mcp.json`) and Codex (`~/.codex/config.toml`), including isolated `.venv` launch examples.
+- Improved bridge/runtime diagnostics:
+  - clearer hints for base URL missing `/artifactory`.
+  - clearer hints for invalid/partial token values.
+- Hardened artifact detail serialization for non-dict `download_stats()` payloads.
 - Updated coverage model from a subset-only toolset to a full-surface bridge over public `dohq-artifactory` methods.
 - Reorganized project layout to `src/artifactory_mcp/` package structure.
+- Refactored `src/artifactory_mcp/server.py` into focused modules
+  (`tools`, `runtime`, `settings`, `artifactory_client`, `bridge`,
+  `artifact_ops`, `models`, `handles`) while keeping `server.py`
+  as a compatibility entrypoint.
 - Added package build metadata and CLI entrypoint `artifactory-mcp`.
 - Kept root `server.py` and `main.py` as compatibility wrappers.
 - Updated docs to describe bridge argument encodings and full-coverage invocation model.
 - Merged scaffolded Python lint/type settings into `pyproject.toml` and added `pre-commit` to dev dependencies.
 - Tuned pre-commit hooks for this repo (`bandit` excludes `tests`, markdownlint ignores `AGENTS.md`).
+- Fixed mypy hook reliability by:
+  - installing runtime dependencies in the pre-commit mypy environment.
+  - adding local `typings/artifactory.pyi` stubs for untyped `dohq-artifactory` surfaces.

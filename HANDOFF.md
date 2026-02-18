@@ -16,6 +16,15 @@
   - `read_artifact_text`
   - `write_artifact_text`
 - Root `server.py` and `main.py` retained as compatibility wrappers.
+- Internal server implementation refactored into focused modules:
+  - `src/artifactory_mcp/tools.py`
+  - `src/artifactory_mcp/runtime.py`
+  - `src/artifactory_mcp/settings.py`
+  - `src/artifactory_mcp/artifactory_client.py`
+  - `src/artifactory_mcp/bridge.py`
+  - `src/artifactory_mcp/artifact_ops.py`
+  - `src/artifactory_mcp/models.py`
+  - `src/artifactory_mcp/handles.py`
 - Package entrypoint added: `artifactory-mcp` and module entrypoint `python -m artifactory_mcp`.
 - Documentation added (`README.md`, `docs/*`, `CHANGELOG.md`).
 - Added installation docs for environments without `uv`.
@@ -23,6 +32,13 @@
 - Full underlying package coverage now provided through generic bridge invocation and handle workflow.
 - Added `examples/tool_calls.json` and `tests/test_smoke.py` for layout completeness.
 - Bootstrapped pre-commit with Python profile and merged template settings into `pyproject.toml`.
+- Fixed mypy hook failures by:
+  - adding runtime dependencies to the pre-commit mypy hook environment.
+  - adding `typings/artifactory.pyi` local stubs for untyped `dohq-artifactory` imports.
+- Improved runtime validation/errors:
+  - token validation now rejects header-only JWT fragments.
+  - Artifactory error hints now include missing `/artifactory` base URL guidance.
+  - details serialization now handles non-dict objects returned by `download_stats()`.
 
 ## Environment Details
 
@@ -47,11 +63,28 @@
 - `timeout 3s uv run artifactory-mcp`: validates package CLI entrypoint startup.
 - `MCP_TRANSPORT=streamable-http timeout 3s uv run artifactory-mcp`: validated HTTP startup and clean shutdown on timeout.
 - `timeout 3s .venv/bin/python server.py`: validates non-uv wrapper execution (with venv activated or explicit venv python).
+- Live Artifactory validation (`https://artifactory.local/artifactory`, SSL verify disabled) with identity token:
+  - All 10 MCP tools validated end-to-end:
+    `list_artifactory_capabilities`,
+    `invoke_artifactory_root_method`,
+    `invoke_artifactory_path_method`,
+    `invoke_artifactory_handle_method`,
+    `list_artifactory_handles`,
+    `drop_artifactory_handle`,
+    `list_artifacts`,
+    `get_artifact_details`,
+    `read_artifact_text`,
+    `write_artifact_text`.
+  - Handle workflow validated using repository handles returned by `get_repositories`.
+  - Limited-scope behavior validated:
+    `/access/api/v1/users` returned `403 FORBIDDEN`;
+    privileged/pro-only `get_users` returns expected upstream Pro limitation error.
 
 ## Known Constraints
 
 - `dohq-artifactory` currently fails on Python 3.14 due `glob._Globber` usage upstream.
 - Use Python 3.13 for this server until upstream compatibility is fixed.
+- Some upstream `dohq-artifactory` methods require Artifactory Pro features and/or elevated scope; generic bridge will surface those upstream errors.
 
 ## Next Steps
 
