@@ -7,7 +7,7 @@ import os
 import re
 from dataclasses import dataclass
 from typing import Literal, cast
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlunparse
 
 _TRUE_VALUES = {"1", "true", "yes", "on"}
 _FALSE_VALUES = {"0", "false", "no", "off"}
@@ -56,6 +56,8 @@ def _validate_base_url(value: str, *, name: str) -> str:
     parsed = urlparse(candidate)
     if parsed.scheme not in {"http", "https"} or not parsed.netloc:
         raise ValueError(f"Invalid {name}: {value!r}. Expected an absolute HTTP/HTTPS URL.")
+    if parsed.path in {"", "/"}:
+        return urlunparse(parsed._replace(path="/artifactory"))
     return candidate
 
 

@@ -276,6 +276,7 @@ Write a text artifact:
 Core settings:
 
 - `ARTIFACTORY_BASE_URL`: base URL like `https://host/artifactory`
+  - If you pass a host-only URL (for example `https://host`), the server auto-normalizes it to `https://host/artifactory`.
 - `ARTIFACTORY_USERNAME`, `ARTIFACTORY_PASSWORD`: username/password auth
 - `ARTIFACTORY_API_KEY`: API key auth (alternative)
 - `ARTIFACTORY_TOKEN`: access token auth (alternative)
@@ -330,7 +331,8 @@ uv run prek install
 - Empty `ARTIFACTORY_BASE_URL` errors:
   - Set `ARTIFACTORY_BASE_URL` or pass `base_url` in tool calls.
 - 404 errors for `/api/*` calls:
-  - Use a base URL that includes `/artifactory` (for example, `https://host/artifactory`).
+  - Host-only base URLs are auto-normalized to include `/artifactory`.
+  - If you pass a custom non-Artifactory path, update it to the correct Artifactory API base path.
 - Admin/user-management method errors:
   - Some methods in the underlying client require Artifactory Pro or elevated scopes and may fail on OSS/limited tokens.
 

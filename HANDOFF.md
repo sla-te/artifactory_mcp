@@ -38,6 +38,7 @@
 - Improved runtime validation/errors:
   - token validation now rejects header-only JWT fragments.
   - Artifactory error hints now include missing `/artifactory` base URL guidance.
+  - host-only base URLs are auto-normalized to append `/artifactory`.
   - details serialization now handles non-dict objects returned by `download_stats()`.
 
 ## Environment Details

@@ -25,6 +25,7 @@
 - Improved bridge/runtime diagnostics:
   - clearer hints for base URL missing `/artifactory`.
   - clearer hints for invalid/partial token values.
+- Base URL normalization now auto-appends `/artifactory` for host-only URLs.
 - Hardened artifact detail serialization for non-dict `download_stats()` payloads.
 - Updated coverage model from a subset-only toolset to a full-surface bridge over public `dohq-artifactory` methods.
 - Reorganized project layout to `src/artifactory_mcp/` package structure.
