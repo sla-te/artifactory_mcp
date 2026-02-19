@@ -75,6 +75,8 @@ class HandleInfo(TypedDict):
 class DropHandleResult(TypedDict):
     handle_id: str
     dropped: bool
+    existed: bool
+    remaining_handles: int
 
 
 class MethodDescriptor(TypedDict):

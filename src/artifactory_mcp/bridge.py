@@ -6,6 +6,7 @@ import inspect
 import pathlib
 from collections.abc import Iterator
 from dataclasses import asdict, is_dataclass
+from difflib import get_close_matches
 from typing import Any, cast
 
 from artifactory import ArtifactoryPath, ArtifactorySaaSPath
@@ -188,6 +189,22 @@ def _public_method_descriptors() -> list[MethodDescriptor]:
     return methods
 
 
+def _public_method_names_for_target(target: Any) -> list[str]:
+    names = {name for name, member in inspect.getmembers(type(target), predicate=callable) if not name.startswith("_")}
+    return sorted(names)
+
+
+def _render_method_suggestions(name: str, candidates: list[str]) -> str:
+    if not candidates:
+        return ""
+    matches = get_close_matches(name, candidates, n=3, cutoff=0.5)
+    if not matches:
+        return ""
+    if len(matches) == 1:
+        return f" Did you mean {matches[0]!r}?"
+    return f" Did you mean one of: {', '.join(repr(item) for item in matches)}?"
+
+
 def _list_capabilities_sync() -> CapabilitiesResult:
     try:
         package_version = importlib.metadata.version("dohq-artifactory")
@@ -230,15 +247,28 @@ def _invoke_method_sync(
     if not name:
         raise ValueError("method cannot be empty.")
 
+    if name.startswith("_"):
+        raise ValueError(
+            f"Method {name!r} is private/special and cannot be invoked. "
+            "Use public callables only (discover via list_artifactory_capabilities)."
+        )
+
+    public_method_names = _public_method_names_for_target(target)
+
     if not hasattr(target, name):
+        suggestion = _render_method_suggestions(name, public_method_names)
         raise ValueError(
             f"Method {name!r} not found on target type {type(target).__name__}. "
             "Call list_artifactory_capabilities for discoverability."
+            f"{suggestion}"
         )
 
     member = getattr(target, name)
     if not callable(member):
-        raise ValueError(f"Attribute {name!r} exists but is not callable.")
+        raise ValueError(
+            f"Attribute {name!r} exists on target type {type(target).__name__} but is not callable. "
+            "This bridge only supports method invocation."
+        )
 
     decoded_args = [_decode_json_argument(item) for item in positional_args]
     decoded_kwargs = {key: _decode_json_argument(value) for key, value in keyword_args.items()}

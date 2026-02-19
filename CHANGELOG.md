@@ -28,6 +28,8 @@
 - Base URL normalization now auto-appends `/artifactory` for host-only URLs.
 - Hardened artifact detail serialization for non-dict `download_stats()` payloads.
 - Fixed artifact stat serialization to normalize datetime/date values to ISO strings for MCP structured output.
+- Updated handle drop semantics to be idempotent with explicit `existed` and `remaining_handles` fields to avoid retry loops.
+- Bridge method validation now rejects private/special names and suggests close public method names for typos (for example `get_repo` -> `get_repositories`).
 - Updated coverage model from a subset-only toolset to a full-surface bridge over public `dohq-artifactory` methods.
 - Reorganized project layout to `src/artifactory_mcp/` package structure.
 - Refactored `src/artifactory_mcp/server.py` into focused modules

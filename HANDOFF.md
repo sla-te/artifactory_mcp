@@ -41,6 +41,8 @@
   - host-only base URLs are auto-normalized to append `/artifactory`.
   - details serialization now handles non-dict objects returned by `download_stats()`.
   - artifact stat serialization now coerces datetime/date values to ISO strings to satisfy structured output validation.
+  - handle drop tool now uses idempotent semantics and reports `existed` + `remaining_handles` to prevent cleanup loops.
+  - bridge invocation now rejects private/special method names and includes typo suggestions for missing methods.
 
 ## Environment Details
 

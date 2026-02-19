@@ -57,6 +57,7 @@ repos:
           - anyio
           - dohq-artifactory>=1.0.1
           - mcp[cli]>=1.26.0
+          - pytest>=8.0.0
 
   - repo: https://github.com/PyCQA/bandit
     rev: 1.9.3

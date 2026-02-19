@@ -3,7 +3,7 @@ from __future__ import annotations
 import threading
 from typing import Any
 
-from .models import HandleInfo
+from .models import DropHandleResult, HandleInfo
 
 
 class _HandleStore:
@@ -41,6 +41,25 @@ class _HandleStore:
                     )
                 )
             return output
+
+    def count(self) -> int:
+        with self._lock:
+            return len(self._items)
+
+
+def _drop_handle_sync(handle_id: str) -> DropHandleResult:
+    normalized = handle_id.strip()
+    if not normalized:
+        raise ValueError("handle_id cannot be empty.")
+
+    existed = _HANDLE_STORE.drop(normalized)
+    # Idempotent delete semantics: desired post-state is "handle absent".
+    return DropHandleResult(
+        handle_id=normalized,
+        dropped=True,
+        existed=existed,
+        remaining_handles=_HANDLE_STORE.count(),
+    )
 
 
 _HANDLE_STORE = _HandleStore()

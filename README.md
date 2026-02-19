@@ -335,6 +335,10 @@ uv run prek install
   - If you pass a custom non-Artifactory path, update it to the correct Artifactory API base path.
 - Admin/user-management method errors:
   - Some methods in the underlying client require Artifactory Pro or elevated scopes and may fail on OSS/limited tokens.
+- Bridge invocation errors such as "method not found" or "not callable":
+  - Use `list_artifactory_capabilities` to discover valid public method names.
+  - `invoke_artifactory_*` tools only call public methods; special/private names like `__dict__` are intentionally rejected.
+  - For repository listing on root/path targets, use `get_repositories` (not `get_repo`).
 
 ## Changelog Lite
 
@@ -361,3 +365,8 @@ Bridge argument encoding conventions:
 - Handle reference: `{\"__handle_id__\": \"h1\"}`
 - Path reference: `{\"__path__\": {\"repository\": \"libs-release-local\", \"path\": \"com/example/app.jar\", \"base_url\": \"https://host/artifactory\"}}`
 - Raw bytes: `{\"__bytes_base64__\": \"...\"}`
+
+Handle cleanup behavior:
+
+- `drop_artifactory_handle` is idempotent and always returns `dropped: true` when the post-state is "absent".
+- Use `existed` to see whether a handle was actually present, and `remaining_handles` to track cleanup progress.

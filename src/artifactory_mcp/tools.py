@@ -14,7 +14,7 @@ from .artifact_ops import (
 from .artifactory_client import _create_path, _create_root, _resolve_base_url
 from .bridge import _invoke_method_sync, _list_capabilities_sync
 from .errors import _format_error
-from .handles import _HANDLE_STORE
+from .handles import _HANDLE_STORE, _drop_handle_sync
 from .models import (
     ArtifactDetailsResult,
     CapabilitiesResult,
@@ -242,9 +242,8 @@ async def list_artifactory_handles() -> list[HandleInfo]:
 
 @mcp.tool(structured_output=True)
 async def drop_artifactory_handle(handle_id: str) -> DropHandleResult:
-    """Drop a stored handle when it is no longer needed."""
-    dropped = await anyio.to_thread.run_sync(_HANDLE_STORE.drop, handle_id)
-    return DropHandleResult(handle_id=handle_id, dropped=dropped)
+    """Idempotently remove a stored handle and report whether it existed."""
+    return cast(DropHandleResult, await anyio.to_thread.run_sync(_drop_handle_sync, handle_id))
 
 
 def main() -> None:
